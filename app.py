@@ -1,8 +1,15 @@
 import logging
 import random
 import requests
+import os  # <-- ADD THIS IMPORT for accessing environment variables
+from dotenv import load_dotenv  # <-- ADD THIS IMPORT
+
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
+
+# ----------------- Load Environment Variables -----------------
+# This line loads the variables from your .env file into the environment
+load_dotenv()
 
 # ----------------- Logging and Error Handler -----------------
 # This setup is great for local debugging. It will print info and errors to your terminal.
@@ -23,21 +30,19 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
     except Exception as e:
         logger.error("Error sending error message: %s", e)
 
-# ----------------- API Keys and Constants (FOR LOCAL VS CODE RUN) -----------------
+# ----------------- API Keys and Constants (SAFE FOR GITHUB) -----------------
 # ###################################################################################
-# # IMPORTANT! SECURITY WARNING!                                                    #
+# # IMPORTANT! Your secrets are now loaded from the .env file.                     #
+# # This code is now safe to commit to a public repository like GitHub.             #
 # ###################################################################################
-# Paste your actual keys below.
-# DO NOT EVER COMMIT THIS FILE WITH YOUR REAL KEYS TO A PUBLIC REPOSITORY (LIKE GITHUB).
-# Anyone who sees your token can take full control of your bot.
-# ###################################################################################
-TOKEN = '7722244548:AAHCay8om-as3DrrB_dAB4H1h9_qIFjPFYI'  # <-- PASTE YOUR TELEGRAM BOT TOKEN HERE
-WEATHER_API_KEY = 'bc8a3bb9166d40879c855343251803' # <-- PASTE YOUR WEATHERAPI.COM KEY HERE
+TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 
-# A check to ensure you've replaced the placeholder keys
-if 'YOUR_TELEGRAM_TOKEN_HERE' in TOKEN or 'YOUR_WEATHER_API_KEY_HERE' in WEATHER_API_KEY:
-    logger.critical("CRITICAL: Please replace the placeholder API keys in the script before running.")
-    raise ValueError("Please replace the placeholder API keys in the script.")
+# A check to ensure you've set up your .env file correctly.
+if not TOKEN or not WEATHER_API_KEY:
+    logger.critical("CRITICAL: Environment variables TELEGRAM_BOT_TOKEN and WEATHER_API_KEY must be set.")
+    # This error is more descriptive for other developers (or you in the future).
+    raise ValueError("Please create a .env file and set the required API keys. See the README.md for details.")
 
 
 # ----------------- Generate Sample Mandi Data -----------------
