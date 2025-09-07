@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyAgriBot - Telegram Bot for Farmers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #388E3C;
+            --secondary-color: #FFC107;
+            --text-color: #333333;
+            --light-text: #666666;
+            --light-bg: #F9F9F9;
+            --white: #FFFFFF;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --telegram-color: #0088cc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-color: var(--light-bg);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        section {
+            padding: 80px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--primary-dark);
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .primary:hover {
+            background-color: var(--primary-dark);
+            color: var(--white);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .secondary {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .secondary:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        /* Animation Backgrounds */
+        .animated-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .floating-leaf {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjNENBRjUwIiBkPSJNNDcyLjI5IDIxNi4yMUwzMzYuNzcgODEuMTNjLTEyLjQ3LTEyLjQtMzIuNjctMTIuNC00NS4xNCAwTDE2Ni4zIDIwNi4zM2MtMTIuNDcgMTIuNC0xMi40NyAzMi42IDAgNDVsNDUuMTQgNDVsLTkwLjI4IDkwLjI3Yy0xMi40OCAxMi40Ny0xMi40OCAzMi42NyAwIDQ1LjE0YzEyLjQ3IDEyLjQ3IDMyLjY3IDEyLjQ3IDQ1LjE0IDBsMTM0Ljg4LTEzNC44ODEgNDUuMTIgNDUuMTRjNi4xNSA2LjIzIDE0LjA4IDkuMzggMjIuNTcgOS4zOHMxNi40Mi0zLjE1IDIyLjU3LTkuMzhsMTM1Ljc0LTEzNS4yOGMxMi40OC0xMi40OCAxMi40OC0zMi43IDAtNDUuMTV6Ij48L3BhdGg+PC9zdmc+');
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .floating-cloud {
+            position: absolute;
+            width: 80px;
+            height: 50px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NDAgNTEyIj48cGF0aCBmaWxsPSIjMDA4OGNjIiBkPSJNNTc1LjIgMzI1LjdjYy41NS0zLjgtLjcyLTcuNzMtMy4yLTEwLjJjLTMuNTUtMy4xLTguODEtMy4xNy0xMi4zNC0uMTdjLTMuMzcgMi43OS04LjE0IDMuMS0xMS44NSAuNzNjLTMuNzMtMi40LTUuNzItNi44NC00Ljk2LTExLjMxYzEuMzQtNy44My0zLjEyLTE1LjQ3LTEwLjU0LTE4LjA1Yy03LjU1LTIuNjEtMTUuODEgMS4wMS0xOS40NSA4LjA0Yy0yLjYgNS4wMy04LjIzIDcuNzktMTMuOCA2Ljc1Yy01LjU1LTEuMDQtOS43MS01LjQ4LTEwLjE5LTExLjA5QzQ4Ny45NCAyNzUuNTQgNDc1LjI3IDI2NCA0NjAgMjY0Yy01LjQgMC0xMC41MyAxLjQyLTE0Ljk2IDMuOTFjLTUuMDYtMjYuNDgtMjkuMTMtNDYuNDQtNTcuMjItNDYuNDRjLTI2LjI5IDAtNDguNzUgMTcuMzctNTYuMjQgNDEuMzVjLTUuMTktMS44LTEwLjgtMi44NS0xNi41OC0yLjg1Yy02Ljc2IDAtMTMuMTggMS4zMy0xOS4wOCAzLjdjLTcuMTgtMjguOTEtMzMuNS01MC40NC02NC44OS01MC40NGMtMzYuODQgMC02Ni42NyAyOS44Mi02Ni42NyA2Ni42N2MwIDguOTQgMS43NiAxNy40OSA0Ljk0IDI1LjMxYy0yLjY0LS40My01LjM0LS42Ni04LjExLS42NmMtMjcuNjcgMC01MC4yIDIyLjUzLTUwLjIgNTAuMmMwIDI3LjY3IDIyLjUzIDUwLjIgNTAuMiA1MC4yaDM2OEM1MzIuNSA0MDUgNTc2IDM2Mi4yNSA1NzYgMzEwYzAgLTguMjIgLS4zNS0xNi40Mi0xLjA0LTI0LjQ0Yy4wOCAzLjE0IC4xNSA2LjMgLjE1IDkuNDQgMCAxMC4xNC0uODUgMjAuNTgtMi41MyAzMC43eiI+PC9wYXRoPjwvc3ZnPg==');
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.08;
+            z-index: 0;
+        }
+
+        .floating-grain {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDggNTEyIj48cGF0aCBmaWxsPSIjRkZDMTA3IiBkPSJNMzUyIDExMS4xYzIyLjEgMCAzMi05LjkgMzItMzJzLTkuOS0zMi0zMi0zMmMtMjIuMSAwLTMyIDkuOS0zMiAzMnM5LjkgMzIgMzIgMzJ6TTMyMCAzNTJjMC0zNS4zLTI4LjctNjQtNjQtNjRzLTY0IDI4LjctNjQgNjRzMjguNyA2NCA2NCA2NHM2NC0yOC43IDY0LTY0ek05NiAxMTEuMWMyMi4xIDAgMzItOS45IDMyLTMycy05LjktMzItMzItMzJjLTIyLjEgMC0zMiA5LjktMzIgMzJzOS45IDMyIDMyIDMyem0xNiAyNzNjMjYuNSAwIDQ4LTIxLjUgNDgtNDhzLTIxLjUtNDgtNDgtNDhzLTQ4IDIxLjUtNDggNDhzMjEuNSA0OCA0OCA0OHptMTc2LTI0MmMtMTUuNiAwLTI4LjYtMTEuMi0zMS4zLTI2YzIuOC00LjggNC44LTkuOCA1LjktMTVjMTQuOSA2LjYgMjcuNSAxOS41IDMzLjggMzUuNWMtMi42IDMuNS01LjggNS41LTguNCA1LjV6Ii8+PC9zdmc+');
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.09;
+            z-index: 0;
+        }
+
+        /* Navigation */
+        nav {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: var(--primary-color);
+            position: relative;
+        }
+
+        .logo h1::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .logo:hover h1::after {
+            width: 100%;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            font-weight: 500;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .menu-btn {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding-top: 120px;
+            background-color: var(--light-bg);
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="%234CAF50" opacity="0.05"/></svg>');
+            background-size: cover;
+            z-index: 0;
+        }
+
+        .hero .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .hero-content {
+            flex: 1;
+            padding-right: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-content h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-buttons {
+            margin-top: 30px;
+        }
+
+        .cta-buttons .btn {
+            margin-right: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* Bot Simulator */
+        .bot-simulator {
+            width: 300px;
+            height: 530px;
+            background-color: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            position: relative;
+            border: 8px solid #222;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        .bot-simulator:hover {
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            transform: translateY(-10px) rotateY(5deg);
+        }
+
+        .bot-header {
+            background-color: var(--telegram-color);
+            color: var(--white);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bot-header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.05) 50%, 
+                transparent 100%
+            );
+            transform: rotate(45deg);
+            z-index: 0;
+        }
+
+        .bot-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .bot-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .bot-header p {
+            margin: 0;
+            font-size: 0.8rem;
+            opacity: 0.8;
+            position: relative;
+            z-index: 1;
+        }
+
+        .bot-messages {
+            height: 400px;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #e6ebee;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><rect width="100" height="100" fill="%23ffffff" opacity="0.5"/><path d="M0,0 L100,100 M100,0 L0,100" stroke="%23dddddd" stroke-width="0.5"/></svg>');
+            background-size: 20px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            animation: fadeIn 0.3s ease;
+            word-wrap: break-word;
+            position: relative;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: #dcf8c6;
+            border-bottom-right-radius: 5px;
+        }
+
+        .user-message::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: -8px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid #dcf8c6;
+            border-top: 8px solid transparent;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: var(--white);
+            border-bottom-left-radius: 5px;
+        }
+
+        .bot-message::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -8px;
+            width: 0;
+            height: 0;
+            border-right: 8px solid var(--white);
+            border-top: 8px solid transparent;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bot-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .bot-option-btn {
+            background-color: var(--telegram-color);
+            color: var(--white);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .bot-option-btn:hover {
+            background-color: #0077b5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .bot-input {
+            display: flex;
+            padding: 10px 15px;
+            background-color: var(--white);
+            border-top: 1px solid #e6e6e6;
+            position: relative;
+        }
+
+        .bot-input::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.05), transparent);
+        }
+
+        .bot-input input {
+            flex: 1;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 15px;
+            background-color: #f0f0f0;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .bot-input input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 136, 204, 0.3);
+            background-color: #f5f5f5;
+        }
+
+        .bot-input button {
+            background-color: var(--telegram-color);
+            color: var(--white);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .bot-input button:hover {
+            background-color: #0077b5;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Features Section */
+        .features {
+            background-color: var(--white);
+            position: relative;
+        }
+
+        .features::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(to bottom, transparent, var(--light-bg));
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-card {
+            background-color: var(--light-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            z-index: 2;
+            border: 1px solid rgba(76, 175, 80, 0.1);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        }
+
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 0 20px 20px;
+            border-color: transparent transparent var(--primary-color) transparent;
+            opacity: 0.1;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card:hover::after {
+            border-width: 0 0 40px 40px;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .feature-icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            opacity: 0.1;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon::after {
+            width: 70px;
+            height: 70px;
+            opacity: 0.15;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .feature-card h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .feature-card:hover h3::after {
+            width: 50px;
+        }
+
+        /* Access Bot Section */
+        .access-bot {
+            background-color: var(--light-bg);
+            position: relative;
+        }
+
+        .access-bot::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: var(--primary-color);
+            opacity: 0.05;
+            border-radius: 50%;
+            transform: translate(100px, -150px);
+            z-index: 0;
+        }
+
+        .access-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .qr-code {
+            text-align: center;
+            position: relative;
+        }
+
+        .qr-code img {
+            max-width: 200px;
+            margin-bottom: 15px;
+            border: 8px solid var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            transition: all 0.5s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .qr-code::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            width: calc(100% + 40px);
+            height: calc(100% - 20px);
+            background-color: var(--primary-color);
+            opacity: 0.05;
+            border-radius: var(--border-radius);
+            z-index: 1;
+            transition: all 0.5s ease;
+        }
+
+        .qr-code:hover::before {
+            transform: rotate(5deg);
+        }
+
+        .qr-code img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .access-info {
+            max-width: 500px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .access-info h3 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        .access-info h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+
+        .access-info ol {
+            margin-left: 20px;
+            margin-bottom: 25px;
+            counter-reset: item;
+            list-style-type: none;
+        }
+
+        .access-info li {
+            margin-bottom: 15px;
+            position: relative;
+            padding-left: 30px;
+            counter-increment: item;
+        }
+
+        .access-info li::before {
+            content: counter(item);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 25px;
+            height: 25px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .access-info li strong {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            background-color: var(--white);
+            position: relative;
+        }
+
+        .how-it-works::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            background-color: var(--secondary-color);
+            opacity: 0.1;
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .steps::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--primary-color), transparent);
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .step {
+            flex: 1;
+            min-width: 220px;
+            text-align: center;
+            padding: 30px 20px;
+            background-color: var(--light-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 1;
+            transition: all 0.5s ease;
+            border: 1px solid rgba(76, 175, 80, 0.1);
+        }
+
+        .step::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, transparent 50%, rgba(76, 175, 80, 0.05) 50%, rgba(76, 175, 80, 0.05) 100%);
+            background-size: 10px 10px;
+            border-radius: var(--border-radius);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: -1;
+        }
+
+        .step:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .step:hover::before {
+            opacity: 1;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin: 0 auto 20px;
+            z-index: 2;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+        }
+
+        .step:hover .step-number {
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        /* FAQ Section */
+        .faq {
+            background-color: var(--light-bg);
+            position: relative;
+        }
+
+        .faq::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,100 M100,0 L0,100" stroke="%234CAF50" stroke-width="0.2" opacity="0.05"/></svg>');
+            background-size: 20px 20px;
+            z-index: 0;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .faq-item {
+            margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.5s ease;
+            background-color: var(--white);
+            border: 1px solid rgba(76, 175, 80, 0.1);
+        }
+
+        .faq-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: var(--white);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .faq-item.active .faq-question,
+        .faq-question:hover {
+            background-color: rgba(76, 175, 80, 0.05);
+        }
+
+        .faq-question h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .faq-question h3::before {
+            content: '?';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 22px;
+            height: 22px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .faq-question i {
+            transition: transform 0.3s ease;
+            color: var(--primary-color);
+        }
+
+        .faq-answer {
+            background-color: var(--white);
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.5s ease;
+            position: relative;
+        }
+
+        .faq-answer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20px;
+            right: 20px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(76, 175, 80, 0.2), transparent);
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 0 20px 20px;
+            max-height: 1000px;
+        }
+
+        .faq-item.active .faq-question i {
+            transform: rotate(45deg);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--text-color);
+            color: var(--white);
+            padding: 60px 0 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--primary-color));
+            z-index: 1;
+        }
+
+        footer::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background-color: var(--primary-color);
+            opacity: 0.05;
+            border-radius: 50%;
+            transform: translate(150px, 150px);
+            z-index: 0;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo img {
+            height: 40px;
+            margin-right: 10px;
+            filter: brightness(0) invert(1);
+        }
+
+        .footer-links h3, .footer-contact h3 {
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-links h3::after, .footer-contact h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background-color: var(--secondary-color);
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+            transition: transform 0.3s ease;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .footer-links li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--secondary-color);
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateX(-10px);
+        }
+
+        .footer-links li:hover {
+            transform: translateX(5px);
+        }
+
+        .footer-links li:hover::before {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .footer-links a {
+            color: var(--white);
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary-color);
+        }
+
+        .footer-contact p {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .footer-contact i {
+            margin-right: 10px;
+            color: var(--secondary-color);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            color: var(--white);
+            font-size: 1.2rem;
+            transition: all 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-icons a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 50%;
+            transform: scale(0);
+            transition: transform 0.5s ease;
+            z-index: -1;
+        }
+
+        .social-icons a:hover {
+            color: var(--white);
+            transform: translateY(-5px);
+        }
+
+        .social-icons a:hover::before {
+            transform: scale(1);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(2deg); }
+            50% { transform: translateY(0px) rotate(0deg); }
+            75% { transform: translateY(10px) rotate(-2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Scale Animation */
+        @keyframes scale {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .hero .container {
+                flex-direction: column;
+            }
+            
+            .hero-content {
+                padding-right: 0;
+                margin-bottom: 40px;
+                text-align: center;
+            }
+
+            .hero-content h1::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            .steps {
+                flex-direction: column;
+            }
+
+            .steps::before {
+                display: none;
+            }
+
+            .feature-card {
+                max-width: 400px;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background-color: var(--white);
+                flex-direction: column;
+                padding: 20px 0;
+                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+                align-items: center;
+                justify-content: flex-start;
+                z-index: 999;
+            }
+            
+            .nav-links.active {
+                display: flex;
+                animation: slideIn 0.3s forwards;
+            }
+            
+            @keyframes slideIn {
+                from { transform: translateX(-100%); }
+                to { transform: translateX(0); }
+            }
+            
+            .nav-links li {
+                margin: 15px 0;
+                text-align: center;
+            }
+            
+            .menu-btn {
+                display: block;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.2rem;
+            }
+            
+            .footer-content > div {
+                flex: 1 1 100%;
+            }
+
+            .bot-simulator {
+                transform: scale(0.9);
+            }
+        }
+
+        @media (max-width: 576px) {
+            section {
+                padding: 60px 0;
+            }
+            
+            .access-content {
+                flex-direction: column;
+            }
+
+            .hero-content h1 {
+                font-size: 1.8rem;
+            }
+
+            .cta-buttons .btn {
+                width: 100%;
+                margin-right: 0;
+            }
+
+            .bot-simulator {
+                transform: scale(0.8);
+                margin: -40px auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjNENBRjUwIiBkPSJNNjQgOTZINDQ4YzM1LjMgMCA2NCAyOC43IDY0IDY0VjM4NGMwIDM1LjMtMjguNyA2NC02NCA2NEg2NGMtMzUuMyAwLTY0LTI4LjctNjQtNjRWMTYwYzAtMzUuMyAyOC43LTY0IDY0LTY0em0xOTIgOTZjLTM1LjMgMC02NCAyOC43LTY0IDY0czI4LjcgNjQgNjQgNjRzNjQtMjguNyA2NC02NHMtMjguNy02NC02NC02NHpNMTI4IDIwOGMwIDguOCA3LjIgMTYgMTYgMTZoMzJjOC44IDAgMTYtNy4yIDE2LTE2cy03LjItMTYtMTYtMTZoLTMyYy04LjggMC0xNiA3LjItMTYgMTZ6bTIyNCAxMjhjOC44IDAgMTYtNy4yIDE2LTE2cy03LjItMTYtMTYtMTZoLTMyYy04LjggMC0xNiA3LjItMTYgMTZzNy4yIDE2IDE2IDE2aDMyeiI+PC9wYXRoPjwvc3ZnPg==" alt="MyAgriBot Logo">
+                <h1>MyAgriBot</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#access">Access Bot</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+            <div class="menu-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="animated-bg" id="animated-bg">
+            <!-- Animated elements will be added by JavaScript -->
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <h1>Your Farming Assistant in Your Pocket</h1>
+                <p>MyAgriBot provides real-time agricultural information, weather forecasts, and market prices right in your Telegram app. Get instant access to farming knowledge whenever you need it!</p>
+                <div class="cta-buttons">
+                    <a href="https://t.me/myagribot" class="btn primary">Start Bot Now</a>
+                    <a href="#features" class="btn secondary">Learn More</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="bot-simulator floating">
+                    <div class="bot-header">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjNENBRjUwIiBkPSJNNjQgOTZINDQ4YzM1LjMgMCA2NCAyOC43IDY0IDY0VjM4NGMwIDM1LjMtMjguNyA2NC02NCA2NEg2NGMtMzUuMyAwLTY0LTI4LjctNjQtNjRWMTYwYzAtMzUuMyAyOC43LTY0IDY0LTY0em0xOTIgOTZjLTM1LjMgMC02NCAyOC43LTY0IDY0czI4LjcgNjQgNjQgNjRzNjQtMjguNyA2NC02NHMtMjguNy02NC02NC02NHpNMTI4IDIwOGMwIDguOCA3LjIgMTYgMTYgMTZoMzJjOC44IDAgMTYtNy4yIDE2LTE2cy03LjItMTYtMTYtMTZoLTMyYy04LjggMC0xNiA3LjItMTYgMTZ6bTIyNCAxMjhjOC44IDAgMTYtNy4yIDE2LTE2cy03LjItMTYtMTYtMTZoLTMyYy04LjggMC0xNiA3LjItMTYgMTZzNy4yIDE2IDE2IDE2aDMyeiI+PC9wYXRoPjwvc3ZnPg==" alt="MyAgriBot Avatar">
+                        <div>
+                            <h3>MyAgriBot</h3>
+                            <p>Online</p>
+                        </div>
+                    </div>
+                    <div class="bot-messages" id="bot-messages">
+                        <!-- Messages will be populated by JavaScript -->
+                    </div>
+                    <div class="bot-input">
+                        <input type="text" id="user-input" placeholder="Type a message...">
+                        <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="animated-bg">
+            <!-- Animated elements will be added by JavaScript -->
+        </div>
+        <div class="container">
+            <h2 class="section-title">Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h3>Crop Information</h3>
+                    <p>Get detailed information about various crops including sowing methods and sun requirements via OpenFarm API.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cloud-sun-rain"></i>
+                    </div>
+                    <h3>Weather Forecasts</h3>
+                    <p>Access real-time weather conditions and 3-day rain forecasts for any location using WeatherAPI.com.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Mandi Prices</h3>
+                    <p>View commodity prices from various markets in Tamil Nadu districts to make informed selling decisions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-keyboard"></i>
+                    </div>
+                    <h3>Interactive Menus</h3>
+                    <p>Navigate easily with user-friendly inline keyboard buttons for a seamless experience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Access Bot Section -->
+    <section id="access" class="access-bot">
+        <div class="animated-bg">
+            <!-- Animated elements will be added by JavaScript -->
+        </div>
+        <div class="container">
+            <h2 class="section-title">Access MyAgriBot</h2>
+            <div class="access-content">
+                <div class="qr-code">
+                    <img id="qr-code-img" src="data:image/png;base64,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" alt="QR Code to access MyAgriBot">
+                    <p>Scan this QR code with your phone camera</p>
+                </div>
+                <div class="access-info">
+                    <h3>How to access:</h3>
+                    <ol>
+                        <li>Open Telegram app on your device</li>
+                        <li>Search for <strong>@myagribot</strong></li>
+                        <li>Start a conversation with the bot</li>
+                        <li>Type /start to begin using the bot</li>
+                    </ol>
+                    <a href="https://t.me/myagribot" class="btn primary">Open in Telegram <i class="fas fa-external-link-alt"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="animated-bg">
+            <!-- Animated elements will be added by JavaScript -->
+        </div>
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Start the Bot</h3>
+                    <p>Search for @myagribot on Telegram and send /start command to begin.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Select a Service</h3>
+                    <p>Choose from crop information, weather forecasts, or mandi prices using the menu buttons.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Get Information</h3>
+                    <p>Receive instant, accurate information about your query directly in the chat.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Make Decisions</h3>
+                    <p>Use the provided data to make informed farming and market decisions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq">
+        <div class="animated-bg">
+            <!-- Animated elements will be added by JavaScript -->
+        </div>
+        <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Is MyAgriBot free to use?</h3>
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, MyAgriBot is completely free to use. All you need is the Telegram app installed on your device.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What crops are supported?</h3>
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>MyAgriBot supports a wide range of crops commonly grown in India, including rice, wheat, cotton, sugarcane, pulses, and various vegetables and fruits.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How accurate is the weather information?</h3>
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>The weather information is sourced from WeatherAPI.com, which provides highly accurate forecasts. However, as with all weather forecasts, there may be slight variations.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Does the bot work offline?</h3>
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>No, you need an internet connection to interact with the bot as it fetches real-time data from various sources.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="animated-bg">
+            <!-- Animated elements will be added by JavaScript -->
+        </div>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjNENBRjUwIiBkPSJNNjQgOTZINDQ4YzM1LjMgMCA2NCAyOC43IDY0IDY0VjM4NGMwIDM1LjMtMjguNyA2NC02NCA2NEg2NGMtMzUuMyAwLTY0LTI4LjctNjQtNjRWMTYwYzAtMzUuMyAyOC43LTY0IDY0LTY0em0xOTIgOTZjLTM1LjMgMC02NCAyOC43LTY0IDY0czI4LjcgNjQgNjQgNjRzNjQtMjguNyA2NC02NHMtMjguNy02NC02NC02NHpNMTI4IDIwOGMwIDguOCA3LjIgMTYgMTYgMTZoMzJjOC44IDAgMTYtNy4yIDE2LTE2cy03LjItMTYtMTYtMTZoLTMyYy04LjggMC0xNiA3LjItMTYgMTZ6bTIyNCAxMjhjOC44IDAgMTYtNy4yIDE2LTE2cy03LjItMTYtMTYtMTZoLTMyYy04LjggMC0xNiA3LjItMTYgMTZzNy4yIDE2IDE2IDE2aDMyeiI+PC9wYXRoPjwvc3ZnPg==" alt="MyAgriBot Logo">
+                    <h2>MyAgriBot</h2>
+                </div>
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#access">Access Bot</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-envelope"></i> support@myagribot.com</p>
+                    <p><i class="fas fa-phone"></i> +91 9876543210</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 MyAgriBot. All rights reserved. | Created by <a href="https://github.com/santhoshsharuk" target="_blank">Santhosh Sharuk</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const menuBtn = document.querySelector('.menu-btn');
+            const navLinks = document.querySelector('.nav-links');
+            
+            menuBtn.addEventListener('click', function() {
+                navLinks.classList.toggle('active');
+            });
+
+            // FAQ accordion
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                
+                question.addEventListener('click', () => {
+                    // Close all other items
+                    faqItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.classList.remove('active');
+                        }
+                    });
+                    
+                    // Toggle current item
+                    item.classList.toggle('active');
+                });
+            });
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        // Close mobile menu if open
+                        navLinks.classList.remove('active');
+                        
+                        // Calculate position to scroll to (accounting for fixed header)
+                        const headerHeight = document.querySelector('nav').offsetHeight;
+                        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Feature cards fade in on scroll
+            const featureCards = document.querySelectorAll('.feature-card');
+            
+            const fadeInCards = () => {
+                featureCards.forEach((card, index) => {
+                    const cardPosition = card.getBoundingClientRect().top;
+                    const screenPosition = window.innerHeight / 1.2;
+                    
+                    if (cardPosition < screenPosition) {
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    }
+                });
+            };
+            
+            window.addEventListener('scroll', fadeInCards);
+            setTimeout(fadeInCards, 500); // Initial check
+
+            // Create floating background elements
+            function createFloatingElements() {
+                const backgrounds = document.querySelectorAll('.animated-bg');
+                
+                backgrounds.forEach(bg => {
+                    // Clear existing elements first
+                    bg.innerHTML = '';
+                    
+                    // Create leaf elements
+                    for (let i = 0; i < 10; i++) {
+                        createFloatingElement(bg, 'floating-leaf');
+                    }
+                    
+                    // Create cloud elements
+                    for (let i = 0; i < 6; i++) {
+                        createFloatingElement(bg, 'floating-cloud');
+                    }
+                    
+                    // Create grain elements
+                    for (let i = 0; i < 15; i++) {
+                        createFloatingElement(bg, 'floating-grain');
+                    }
+                });
+            }
+            
+            function createFloatingElement(parent, className) {
+                const element = document.createElement('div');
+                element.className = className;
+                
+                // Random positioning
+                const xPos = Math.random() * 100;
+                const yPos = Math.random() * 100;
+                element.style.left = `${xPos}%`;
+                element.style.top = `${yPos}%`;
+                
+                // Random size
+                const size = 30 + Math.random() * 40;
+                element.style.width = `${size}px`;
+                element.style.height = `${size}px`;
+                
+                // Random animation duration and delay
+                const duration = 15 + Math.random() * 30;
+                const delay = Math.random() * 15;
+                element.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+                
+                // Random rotation
+                const rotation = Math.random() * 360;
+                element.style.transform = `rotate(${rotation}deg)`;
+                
+                // Random opacity
+                const opacity = 0.05 + Math.random() * 0.1;
+                element.style.opacity = opacity;
+                
+                parent.appendChild(element);
+            }
+            
+            // Initialize floating elements
+            createFloatingElements();
+            
+            // Recreate on window resize
+            window.addEventListener('resize', createFloatingElements);
+
+            // Bot Simulation
+            const botMessages = document.getElementById('bot-messages');
+            const userInput = document.getElementById('user-input');
+            const sendBtn = document.getElementById('send-btn');
+
+            // Sample bot responses
+            const botResponses = {
+                '/start': {
+                    text: 'Welcome to MyAgriBot! 🌱 I can help you with crop information, weather forecasts, and market prices. What would you like to know?',
+                    options: ['Crop Information', 'Weather Forecast', 'Mandi Prices']
+                },
+                'crop information': {
+                    text: 'Please select a crop to get detailed information:',
+                    options: ['Rice', 'Wheat', 'Cotton', 'Tomato', 'Onion']
+                },
+                'rice': {
+                    text: '🌾 Rice (Oryza sativa)\n\nSowing Season: June-July (Kharif), Nov-Dec (Rabi)\n\nWater Requirement: High (Submerged conditions)\n\nSoil Type: Clay or clay loam soils\n\nFertilizer: N:P:K (120:60:60 kg/ha)\n\nHarvesting: 110-150 days after sowing',
+                    options: ['Back to Crops', 'Main Menu']
+                },
+                'weather forecast': {
+                    text: 'Please share your location or type the name of your city to get weather information:',
+                    options: []
+                },
+                'chennai': {
+                    text: '🌤️ Weather for Chennai\n\nCurrent: 32°C, Partly Cloudy\nHumidity: 65%\nWind: 12 km/h\n\nNext 3 Days Forecast:\nTomorrow: 33°C (10% chance of rain)\nDay 2: 31°C (30% chance of rain)\nDay 3: 30°C (70% chance of rain)',
+                    options: ['Main Menu']
+                },
+                'mandi prices': {
+                    text: 'Select a district to view current market prices:',
+                    options: ['Chennai', 'Coimbatore', 'Madurai', 'Trichy']
+                },
+                'chennai mandi': {
+                    text: '💰 Market Prices in Chennai (₹/Quintal):\n\nRice: ₹3,200 - ₹3,800\nWheat: ₹2,100 - ₹2,400\nSugarcane: ₹280 - ₹320\nOnion: ₹1,800 - ₹2,200\nTomato: ₹1,200 - ₹1,600',
+                    options: ['Other Districts', 'Main Menu']
+                },
+                'help': {
+                    text: 'Here are commands you can use:\n\n/start - Start the bot\n/crops - Get crop information\n/weather - Check weather forecast\n/mandi - View market prices\n/help - Show this help message',
+                    options: ['Main Menu']
+                }
+            };
+
+            // Default welcome message
+            setTimeout(() => {
+                addBotMessage(botResponses['/start'].text, botResponses['/start'].options);
+            }, 1000);
+
+            // Send message function
+            function sendMessage() {
+                const message = userInput.value.trim();
+                if (message === '') return;
+                
+                // Add user message
+                addUserMessage(message);
+                userInput.value = '';
+                
+                // Bot response with typing indicator
+                showTypingIndicator();
+                
+                setTimeout(() => {
+                    // Remove typing indicator
+                    removeTypingIndicator();
+                    
+                    const lowerMsg = message.toLowerCase();
+                    let response;
+                    
+                    if (botResponses[lowerMsg]) {
+                        response = botResponses[lowerMsg];
+                    } else if (lowerMsg.includes('rice') || lowerMsg.includes('paddy')) {
+                        response = botResponses['rice'];
+                    } else if (lowerMsg.includes('weather') || lowerMsg.includes('rain') || lowerMsg.includes('forecast')) {
+                        response = botResponses['weather forecast'];
+                    } else if (lowerMsg.includes('chennai') && !lowerMsg.includes('mandi')) {
+                        response = botResponses['chennai'];
+                    } else if (lowerMsg.includes('mandi') || lowerMsg.includes('price') || lowerMsg.includes('market')) {
+                        response = botResponses['mandi prices'];
+                    } else if (lowerMsg.includes('chennai') && lowerMsg.includes('mandi')) {
+                        response = botResponses['chennai mandi'];
+                    } else {
+                        response = {
+                            text: "I'm not sure I understand. Try asking about crop information, weather forecasts, or mandi prices. Or type /help for assistance.",
+                            options: ['Crop Information', 'Weather Forecast', 'Mandi Prices', 'Help']
+                        };
+                    }
+                    
+                    addBotMessage(response.text, response.options);
+                    scrollToBottom();
+                }, 1000);
+            }
+
+            // Show typing indicator
+            function showTypingIndicator() {
+                const typingIndicator = document.createElement('div');
+                typingIndicator.className = 'message bot-message typing-indicator';
+                typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+                typingIndicator.id = 'typing-indicator';
+                botMessages.appendChild(typingIndicator);
+                scrollToBottom();
+            }
+
+            // Remove typing indicator
+            function removeTypingIndicator() {
+                const typingIndicator = document.getElementById('typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+            }
+
+            // Add user message to chat
+            function addUserMessage(text) {
+                const message = document.createElement('div');
+                message.className = 'message user-message';
+                message.textContent = text;
+                botMessages.appendChild(message);
+                scrollToBottom();
+            }
+
+            // Add bot message to chat
+            function addBotMessage(text, options) {
+                const message = document.createElement('div');
+                message.className = 'message bot-message';
+                
+                // Process text to make it HTML - add line breaks
+                const formattedText = text.replace(/\n/g, '<br>');
+                message.innerHTML = formattedText;
+                
+                if (options && options.length > 0) {
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = 'bot-options';
+                    
+                    options.forEach(option => {
+                        const button = document.createElement('button');
+                        button.className = 'bot-option-btn';
+                        button.textContent = option;
+                        button.addEventListener('click', () => {
+                            addUserMessage(option);
+                            
+                            showTypingIndicator();
+                            
+                            setTimeout(() => {
+                                removeTypingIndicator();
+                                
+                                let response;
+                                const lowerOption = option.toLowerCase();
+                                
+                                if (lowerOption === 'main menu') {
+                                    response = botResponses['/start'];
+                                } else if (lowerOption === 'crop information') {
+                                    response = botResponses['crop information'];
+                                } else if (lowerOption === 'weather forecast') {
+                                    response = botResponses['weather forecast'];
+                                } else if (lowerOption === 'mandi prices') {
+                                    response = botResponses['mandi prices'];
+                                } else if (lowerOption === 'chennai') {
+                                    response = botResponses['chennai mandi'];
+                                } else if (lowerOption === 'help') {
+                                    response = botResponses['help'];
+                                } else if (lowerOption === 'rice') {
+                                    response = botResponses['rice'];
+                                } else {
+                                    response = {
+                                        text: `You selected ${option}. This feature is available in the full version of MyAgriBot on Telegram.`,
+                                        options: ['Main Menu']
+                                    };
+                                }
+                                
+                                addBotMessage(response.text, response.options);
+                                scrollToBottom();
+                            }, 1000);
+                        });
+                        
+                        optionsDiv.appendChild(button);
+                    });
+                    
+                    message.appendChild(optionsDiv);
+                }
+                
+                botMessages.appendChild(message);
+                scrollToBottom();
+            }
+
+            // Scroll chat to bottom
+            function scrollToBottom() {
+                botMessages.scrollTop = botMessages.scrollHeight;
+            }
+
+            // Send message on button click
+            sendBtn.addEventListener('click', sendMessage);
+
+            // Send message on Enter key
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            // Add CSS for typing indicator
+            const style = document.createElement('style');
+            style.textContent = `
+                .typing-indicator {
+                    display: flex;
+                    align-items: center;
+                    padding: 15px 15px;
+                }
+                
+                .typing-indicator span {
+                    height: 8px;
+                    width: 8px;
+                    background: #666;
+                    border-radius: 50%;
+                    display: inline-block;
+                    margin-right: 5px;
+                    animation: bounce 1.5s infinite ease-in-out;
+                }
+                
+                .typing-indicator span:nth-child(1) {
+                    animation-delay: 0s;
+                }
+                
+                .typing-indicator span:nth-child(2) {
+                    animation-delay: 0.2s;
+                }
+                
+                .typing-indicator span:nth-child(3) {
+                    animation-delay: 0.4s;
+                    margin-right: 0;
+                }
+                
+                @keyframes bounce {
+                    0%, 60%, 100% {
+                        transform: translateY(0);
+                    }
+                    30% {
+                        transform: translateY(-5px);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            // Parallax effect on scroll
+            window.addEventListener('scroll', function() {
+                const scrollY = window.scrollY;
+                
+                // Get all background elements
+                const backgrounds = document.querySelectorAll('.animated-bg');
+                
+                backgrounds.forEach(bg => {
+                    // Get all floating elements in this background
+                    const elements = bg.querySelectorAll('div');
+                    
+                    elements.forEach(element => {
+                        // Apply parallax effect based on scroll position
+                        const speed = 0.05;
+                        const yPos = -(scrollY * speed);
+                        
+                        // Apply transform to create parallax effect
+                        element.style.transform = `translateY(${yPos}px) rotate(${element.dataset.rotation || 0}deg)`;
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
